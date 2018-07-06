@@ -2,6 +2,9 @@ package nz.ac.auckland.mysql.connector;
 
 import java.sql.*;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Connector {
 
     Connection conn = null;
@@ -42,7 +45,7 @@ public class Connector {
     }
 
 
-    public String executeQuery( String query ){
+    public JSONArray executeQuery( String query ){
 
         Statement stmt = null;
         ResultSet rs = null;
@@ -51,18 +54,21 @@ public class Connector {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
 
-            int count = 5;
-            while (rs.next()) {
-                String id = rs.getString("PID");
-                String firstName = rs.getString("FIRST");
-                String lastName = rs.getString("LAST");
-                System.out.println("PID: " + id + ", First Name: " + firstName
-                        + ", Last Name: " + lastName);
-                count--;
-                if(count == 0){
-                    break;
-                }
-            }
+            JSONArray jsonArray = convertToJSON(rs);
+            
+            return jsonArray;
+//            int count = 5;
+//            while (rs.next()) {
+//                String id = rs.getString("PID");
+//                String firstName = rs.getString("FIRST");
+//                String lastName = rs.getString("LAST");
+//                System.out.println("PID: " + id + ", First Name: " + firstName
+//                        + ", Last Name: " + lastName);
+//                count--;
+//                if(count == 0){
+//                    break;
+//                }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -71,6 +77,21 @@ public class Connector {
         }
         return null;
     }
+    
+    public static JSONArray convertToJSON(ResultSet resultSet)
+            throws Exception {
+        JSONArray jsonArray = new JSONArray();
+        while (resultSet.next()) {
+            int total_rows = resultSet.getMetaData().getColumnCount();
+            for (int i = 0; i < total_rows; i++) {
+                JSONObject obj = new JSONObject();
+                obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
+                        .toLowerCase(), resultSet.getObject(i + 1));
+                jsonArray.put(obj);
+            }
+        }
+        return jsonArray;
+    }    
 
 
 
