@@ -5,6 +5,7 @@
     <artifactId>mysql-connector</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -37,7 +38,6 @@
     </dependencies>
     <build>
         <plugins>
-
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
@@ -69,8 +69,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -100,5 +98,5 @@
                 </configuration>
             </plugin>
     </plugins>
-</build>
+    </build>
 </project>
