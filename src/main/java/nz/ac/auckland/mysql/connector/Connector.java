@@ -73,10 +73,15 @@ public class Connector {
         while (resultSet.next()) {
             int total_cols = resultSet.getMetaData().getColumnCount();
             JSONArray jsonArray = new JSONArray();
-            for (int i = 1; i < total_cols; i++) {
+            for (int i = 0; i < total_cols; i++) {
                 JSONObject obj = new JSONObject();
-                obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
-                        .toLowerCase(), resultSet.getObject(i + 1));
+                if (resultSet.getObject(i+1) != null) {
+	                obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
+	                        .toLowerCase(), resultSet.getObject(i + 1));
+                } else {
+	                obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
+	                        .toLowerCase(), JSONObject.NULL);
+                }
                 jsonArray.put(obj);
             }
             jsonObject.put("Record_" + count, jsonArray);
