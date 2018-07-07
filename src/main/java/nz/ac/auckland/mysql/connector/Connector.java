@@ -9,43 +9,43 @@ public class Connector {
 
     Connection conn = null;
 
-    public Connector(String authenticatiionMethod, String username, String password){
+    public Connector(){
 
-        Authenticator authenticator = null;
-
-        switch (authenticatiionMethod){
-
-            case "Google": authenticator  = new GoogleAuthenticator();
-            break;
-
-        }
-
-        if(authenticator != null){
-            Integer responseCode = authenticator.authenticate(username,password);
-            if(responseCode == 200){
+//        Authenticator authenticator = null;
+//
+//        switch (authenticatiionMethod){
+//
+//            case "Google": authenticator  = new GoogleAuthenticator();
+//            break;
+//
+//        }
+//
+//        if(authenticator != null){
+//            Integer responseCode = authenticator.authenticate(username,password);
+//            if(responseCode == 200){
 
                 try {
                     Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
                     String connectionUrl = "jdbc:mysql://localhost:3306/medical";
                     String connectionUser = "root";
-                    String connectionPassword = "xiaoshuqin";
+                    String connectionPassword = "";
                     conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                throw new RuntimeException();
-            }
-
-        } else {
-            throw new RuntimeException();
-        }
+//            } else {
+//                throw new RuntimeException();
+//            }
+//
+//        } else {
+//            throw new RuntimeException();
+//        }
 
 
     }
 
 
-    public JSONArray executeQuery( String query ){
+    public JSONObject executeQuery( String query ){
 
         Statement stmt = null;
         ResultSet rs = null;
@@ -54,21 +54,9 @@ public class Connector {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(query);
 
-            JSONArray jsonArray = convertToJSON(rs);
+            JSONObject jsonObject = convertToJSON(rs);
             
-            return jsonArray;
-//            int count = 5;
-//            while (rs.next()) {
-//                String id = rs.getString("PID");
-//                String firstName = rs.getString("FIRST");
-//                String lastName = rs.getString("LAST");
-//                System.out.println("PID: " + id + ", First Name: " + firstName
-//                        + ", Last Name: " + lastName);
-//                count--;
-//                if(count == 0){
-//                    break;
-//                }
-//            }
+            return jsonObject;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -78,20 +66,24 @@ public class Connector {
         return null;
     }
     
-    public static JSONArray convertToJSON(ResultSet resultSet)
+    public static JSONObject convertToJSON(ResultSet resultSet)
             throws Exception {
-        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        int count = 0;
         while (resultSet.next()) {
-            int total_rows = resultSet.getMetaData().getColumnCount();
-            for (int i = 0; i < total_rows; i++) {
+            int total_cols = resultSet.getMetaData().getColumnCount();
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 1; i < total_cols; i++) {
                 JSONObject obj = new JSONObject();
                 obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
                         .toLowerCase(), resultSet.getObject(i + 1));
                 jsonArray.put(obj);
             }
+            jsonObject.put("Record_" + count, jsonArray);
+            count++;
         }
-        return jsonArray;
-    }    
+        return jsonObject;
+    }
 
 
 
