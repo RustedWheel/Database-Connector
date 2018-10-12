@@ -1,4 +1,4 @@
-# Database Connector/Access Control App
+# Database Connector
 
 This is the partial implmentation for the database connector/access control application that suppose to be able.
 
