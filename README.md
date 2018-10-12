@@ -1,6 +1,6 @@
 # Database Connector
 
-This is the partial implmentation for the database connector/access control application.
+This is the partial implementation for the database connector/access control application.
 
 It is suppose to authenticate users, enforce access control, and execute query strings on healthcare providers' databases.
 
